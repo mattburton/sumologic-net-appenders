@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("SumoLogic.Logging.Log4Net")]
 [assembly: AssemblyDescription("SumoLogic provides an interface between log4Net and remote sevice Logging.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("SumoLogic")]
+[assembly: AssemblyCompany("Sumo Logic")]
 [assembly: AssemblyProduct("SumoLogic.Logging.Log4Net")]
 [assembly: AssemblyCopyright("Copyright © 2015 Sumo Logic Inc. - All Rights Reserved")]
 [assembly: AssemblyTrademark("")]
@@ -32,6 +32,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.3")]
-[assembly: AssemblyFileVersion("1.0.0.3")]
+[assembly: AssemblyVersion("1.0.0.4")]
+[assembly: AssemblyFileVersion("1.0.0.4")]
 [assembly: CLSCompliant(true)]
