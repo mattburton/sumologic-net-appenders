@@ -23,6 +23,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace SumoLogic.Logging.Log4Net
 {
     using System;
@@ -58,6 +62,11 @@ namespace SumoLogic.Logging.Log4Net
         /// The flush buffer task.
         /// </summary>
         private SumoLogicMessageSenderBufferFlushingTask flushBufferTask;
+        
+        /// <summary>
+        /// The flush buffer worker that executes the task on a regular interval.
+        /// </summary>
+        private Task flushBufferWorker;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BufferedSumoLogicAppender"/> class.
@@ -271,11 +280,13 @@ namespace SumoLogic.Logging.Log4Net
                 this.SourceHost,
                 this.LogLog);
 
-            this.flushBufferTimer = new Timer(
-                _ => flushBufferTask.Run(), // No task await to avoid unhandled exception
-                null,
-                TimeSpan.FromMilliseconds(0),
-                TimeSpan.FromMilliseconds(this.FlushingAccuracy));
+//            this.flushBufferTimer = new Timer(
+//                _ => flushBufferTask.Run(), // No task await to avoid unhandled exception
+//                null,
+//                TimeSpan.FromMilliseconds(0),
+//                TimeSpan.FromMilliseconds(this.FlushingAccuracy));
+            
+            this.flushBufferWorker = Task.Factory.StartNew(FlushBufferAction, CancellationToken.None, TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
         }
 
         /// <summary>
@@ -355,6 +366,21 @@ namespace SumoLogic.Logging.Log4Net
         {
             flushBufferTask?.FlushAndSend().GetAwaiter().GetResult();
             return true;
+        }
+        
+        private void FlushBufferAction()
+        {
+            while (true)
+            {
+                try
+                {
+                    flushBufferTask.Run().GetAwaiter().GetResult();
+                }
+                catch (Exception e)
+                {
+                    this.LogLog.Error($"{typeof(BufferedSumoLogicAppender).Name} fatal error in worker thread: {e}");
+                }
+            }
         }
     }
 }
